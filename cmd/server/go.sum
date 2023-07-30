@@ -1,2 +1,4 @@
+github.com/danny-yamamoto/go-dockertest-example v0.0.0-20230728081125-a1524d0b019a h1:KWblDPwZp3696GLDUwo2brQ8TH2XgDOVncl5Tr5pWFI=
+github.com/danny-yamamoto/go-dockertest-example v0.0.0-20230728081125-a1524d0b019a/go.mod h1:wBanj+KF/3oeHvkzZ4MZ0aaXW3gVkV2eU3KHRD23NvA=
 github.com/lib/pq v1.10.9 h1:YXG7RB+JIjhP29X+OtkiDnYaXQwpS4JEWq7dtCCRUEw=
 github.com/lib/pq v1.10.9/go.mod h1:AlVN5x4E4T544tWzH6hKfbfQvm3HdbOxrmggDNAPY9o=
