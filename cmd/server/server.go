@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"reflect"
+	"net/http"
 
 	"github.com/danny-yamamoto/go-dockertest-example/tutorial"
 	_ "github.com/lib/pq"
@@ -19,29 +19,35 @@ const (
 	PASSWORD = "postgres"
 )
 
-func main() {
-	fmt.Println("hello")
+type Handler struct {
+	db *sql.DB
+}
+
+func NewHandler(db *sql.DB) *Handler {
+	return &Handler{db: db}
+}
+
+func (h *Handler) authorHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := context.Background()
+	queries := tutorial.New(h.db)
+	authors, err := queries.ListAuthors(ctx)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println(authors)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("ok"))
+}
+
+func main() {
 	connStr := fmt.Sprintf("host=%s port=%s dbname=%s user=%s password=%s sslmode=disable", HOST, PORT, DBNAME, USER, PASSWORD)
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer db.Close()
-	queries := tutorial.New(db)
-	authors, err := queries.ListAuthors(ctx)
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Println(authors)
-	insert, err := queries.CreateAuthor(ctx, tutorial.CreateAuthorParams{Name: "danny", Bio: sql.NullString{String: "SRE", Valid: true}})
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Println(insert)
-	fetched, err := queries.GetAuthor(ctx, insert.ID)
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Println(reflect.DeepEqual(insert, fetched))
+	handler := NewHandler(db)
+	http.HandleFunc("/", handler.authorHandler)
+	http.ListenAndServe(":8080", nil)
 }
