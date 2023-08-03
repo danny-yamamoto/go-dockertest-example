@@ -71,3 +71,8 @@ func TestMain(m *testing.M) {
 	}
 	os.Exit(code)
 }
+
+func Test1(t *testing.T) {
+	// テスト実施
+	fmt.Println("do test1")
+}
