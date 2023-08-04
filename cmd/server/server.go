@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -36,6 +37,9 @@ func (h *Handler) authorHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Println(authors)
 	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(authors); err != nil {
+		http.Error(w, "Failed to encode authors to JSON", http.StatusInternalServerError)
+	}
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("ok"))
 }
